@@ -1,12 +1,27 @@
 from pytube import YouTube
 from spotipy.oauth2 import SpotifyOAuth
 from youtubesearchpython import VideosSearch
+import re
 import spotipy
 import subprocess
 import sys
 
 def install(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+def extract_playlist_id(playlist_url):
+    # Define a regular expression pattern to match the playlist ID
+    pattern = r'/playlist/([a-zA-Z0-9]+)'
+
+    # Use re.search to find the playlist ID in the URL
+    match = re.search(pattern, playlist_url)
+
+    # Check if a match was found
+    if match:
+        playlist_id = match.group(1)
+        return playlist_id
+    else:
+        return None
 
 def download_youtube_video(video_url, save_path):
     try:
@@ -54,10 +69,10 @@ if __name__ == "__main__":
         if module not in sys.modules:
             install(module)
 
-    playlist_link = list(input("Enter the url of the playlist you want to: ").split("/")) #playlist your goes here
-    playlist_id = list(playlist_link[-1].split("?")) #extracting the playlist id from the url
+    playlist_link = input("Enter the url of the playlist you want to: ") #playlist your goes here
+    playlist_id = extract_playlist_id(playlist_link) #extracting the playlist id from the url
 
-    songs = get_playlist_tracks(playlist_id[0])
+    songs = get_playlist_tracks(playlist_id)
 
     if songs:
         for index, song in enumerate(songs, 1):
