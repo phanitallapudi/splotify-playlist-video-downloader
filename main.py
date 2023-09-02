@@ -1,7 +1,12 @@
 from pytube import YouTube
-import spotipy
-from youtubesearchpython import VideosSearch
 from spotipy.oauth2 import SpotifyOAuth
+from youtubesearchpython import VideosSearch
+import spotipy
+import subprocess
+import sys
+
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def download_youtube_video(video_url, save_path):
     try:
@@ -43,6 +48,12 @@ def get_playlist_tracks(playlist_id):
     return song_names
 
 if __name__ == "__main__":
+
+    modules = ["pytube", "spotipy", "youtube-search-python"]
+    for module in modules:
+        if module not in sys.modules:
+            install(module)
+
     playlist_link = list(input("Enter the url of the playlist you want to: ").split("/")) #playlist your goes here
     playlist_id = list(playlist_link[-1].split("?")) #extracting the playlist id from the url
 
